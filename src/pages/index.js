@@ -82,7 +82,7 @@ export default function Home({ songs }) {
             {favorites.map((elem, index) => {
               return (
                 <div key={index} onClick={play} data-index={elem.id}>
-                  {elem.img}
+                  {elem.title}
                 </div>
               );
             })}
@@ -104,7 +104,7 @@ export default function Home({ songs }) {
                           <div className="cell shrink">
                             <div className="picture">
                               <Image
-                                src={song.img}
+                                src={`/assets/musics/covers/${song.img}`}
                                 alt={song.title}
                                 width={450}
                                 height={450}
@@ -135,7 +135,7 @@ export default function Home({ songs }) {
                       <div>
                         <Image
                           className="cover"
-                          src={currentSong.img}
+                          src={`/assets/musics/covers/${currentSong.img}`}
                           alt={currentSong.title}
                           width={450}
                           height={450}
