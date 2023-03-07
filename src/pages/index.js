@@ -11,10 +11,18 @@ export default function Home({ songs }) {
   const [isPlaying, setisPlaying] = useState(false);
   const [currentTime, setcurrentTime] = useState();
   const [currentSong, setcurrentSong] = useState();
+  const [favorites, setfavorites] = useState([]);
+
   const audioRef = useRef();
 
+  const like = () => {
+    let song = { ...currentSong };
+    delete song.isPlaying;
+    setfavorites([...favorites, song]);
+  };
+
   const play = async (e) => {
-    const index = e.target.dataset.index;
+    const index = songs.findIndex((elem) => elem.id == e.target.dataset.index);
     await setaudioSrc(songs[index].src);
     if (songs[index].isPlaying) {
       delete songs[index].isPlaying;
@@ -66,7 +74,20 @@ export default function Home({ songs }) {
           ></Image>
           <Image src={brasVinyl} className="brasVinyl" alt="bras"></Image>
         </div>
-        <header></header>
+        <header>
+          <details>
+            <summary>
+              <b>Favorites</b>
+            </summary>
+            {favorites.map((elem, index) => {
+              return (
+                <div key={index} onClick={play} data-index={elem.id}>
+                  {elem.img}
+                </div>
+              );
+            })}
+          </details>
+        </header>
         <main>
           <div>
             <div className="grid-container">
@@ -85,8 +106,8 @@ export default function Home({ songs }) {
                               <Image
                                 src={song.img}
                                 alt={song.title}
-                                width={100}
-                                height={100}
+                                width={450}
+                                height={450}
                               />
                             </div>
                           </div>
@@ -98,7 +119,7 @@ export default function Home({ songs }) {
                             <small
                               className="btnPlayPause"
                               onClick={play}
-                              data-index={index}
+                              data-index={song.id}
                             >
                               {song.isPlaying ? "pause" : "play"}
                             </small>
@@ -116,8 +137,8 @@ export default function Home({ songs }) {
                           className="cover"
                           src={currentSong.img}
                           alt={currentSong.title}
-                          width={500}
-                          height={500}
+                          width={450}
+                          height={450}
                         />
                       </div>
                       <div className="grid-x grid-padding-x align-middle">
@@ -125,7 +146,7 @@ export default function Home({ songs }) {
                           <h5>{currentSong.title}</h5>
                         </div>
                         <div className="cell auto text-right">
-                          <AiOutlineHeart />
+                          <AiOutlineHeart onClick={like} />
                         </div>
                       </div>
                       <small>{currentTime}</small>

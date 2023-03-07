@@ -5,7 +5,7 @@ const musics = [
     id: 4,
     title: "RnbStylerz What",
     src: "Rnbstylerz_AREES-What(Edit).mp3",
-    img: "http://placeimg.com/640/640/tech/any",
+    img: "PwtI82k9_400x400.jpg",
   },
   {
     id: 5,
