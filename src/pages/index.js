@@ -1,11 +1,54 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import { useState, useRef, useEffect } from "react";
+import { AiOutlineHeart } from "react-icons/ai";
 
-const inter = Inter({ subsets: ['latin'] })
+import Head from "next/head";
+import Image from "next/image";
+import vinyl from "./../../public/assets/images/vinyl.png";
+import brasVinyl from "./../../public/assets/images/brasVinyl.png";
 
-export default function Home() {
+export default function Home({ songs }) {
+  const [audioSrc, setaudioSrc] = useState();
+  const [isPlaying, setisPlaying] = useState(false);
+  const [currentTime, setcurrentTime] = useState();
+  const [currentSong, setcurrentSong] = useState();
+  const audioRef = useRef();
+
+  const play = async (e) => {
+    const index = e.target.dataset.index;
+    await setaudioSrc(songs[index].src);
+    if (songs[index].isPlaying) {
+      delete songs[index].isPlaying;
+      setisPlaying(!isPlaying);
+      isPlaying ? audioRef.current.pause() : audioRef.current.play();
+      return;
+    }
+    songs.forEach((song) => {
+      delete song.isPlaying;
+    });
+    songs[index].isPlaying = true;
+    await audioRef.current.play();
+    setisPlaying(true);
+    const time = convertInMinutesSecondes(audioRef.current.duration);
+    setcurrentTime(time);
+    setcurrentSong(songs[index]);
+  };
+
+  const handleEnded = async () => {
+    await setaudioSrc(songs[0].src);
+    console.log(audioSrc);
+    const time = convertInMinutesSecondes(audioRef.current.duration);
+    setcurrentTime(time);
+    await audioRef.current.play();
+  };
+
+  const convertInMinutesSecondes = (secondes) => {
+    const minutes = Math.floor(secondes / 60);
+    let seconds = Math.floor(secondes - minutes * 60);
+    seconds < 10 && (seconds = "0" + seconds);
+    const convert = `${minutes}:${seconds}`;
+    return convert;
+  };
+
   return (
     <>
       <Head>
@@ -14,110 +57,94 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>src/pages/index.js</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
+      <div className="wrapper">
+        <div className="wrapperVinyl">
           <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
+            src={vinyl}
+            className={`vinyle ${isPlaying && "turn"}`}
+            alt="vinyl"
+          ></Image>
+          <Image src={brasVinyl} className="brasVinyl" alt="bras"></Image>
+        </div>
+        <header></header>
+        <main>
+          <div>
+            <div className="grid-container">
+              <div className="grid-x grid-padding-x align-middle align-justify">
+                <div className="cell small-6 h40vh">
+                  {songs.map((song, index) => {
+                    let formattedNumber = index.toLocaleString("en-US", {
+                      minimumIntegerDigits: 2,
+                      useGrouping: false,
+                    });
+                    return (
+                      <div key={index}>
+                        <div className="grid-x grid-padding-x align-middle mb1">
+                          <div className="cell shrink">
+                            <div className="picture">
+                              <img src={song.img} alt="" />
+                            </div>
+                          </div>
+                          <div className="cell shrink">
+                            <div>{formattedNumber}</div>
+                          </div>
+                          <div className="cell shrink">
+                            <div className="title">{song.title} </div>
+                            <small
+                              className="btnPlayPause"
+                              onClick={play}
+                              data-index={index}
+                            >
+                              {song.isPlaying ? "pause" : "play"}
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="cell small-3">
+                  {currentSong != null && (
+                    <>
+                      <div>
+                        <img
+                          className="cover"
+                          src={currentSong.img}
+                          alt={currentSong.title}
+                        />
+                      </div>
+                      <div className="grid-x grid-padding-x align-middle">
+                        <div className="cell shrink ">
+                          <h5>{currentSong.title}</h5>
+                        </div>
+                        <div className="cell auto text-right">
+                          <AiOutlineHeart />
+                        </div>
+                      </div>
+                      <small>{currentTime}</small>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+        </main>
+        <footer>
+          <audio
+            // controls
+            src={`/assets/musics/${audioSrc}`}
+            ref={audioRef}
+            onEnded={handleEnded}
+          ></audio>
+        </footer>
+      </div>
     </>
-  )
+  );
+}
+export async function getServerSideProps() {
+  const res = await fetch(`http://localhost:3000/api/music`);
+  const songs = await res.json();
+
+  // Pass data to the page via props
+  return { props: { songs } };
 }
