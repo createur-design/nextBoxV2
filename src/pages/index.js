@@ -38,7 +38,7 @@ export default function Home({ songs }) {
     console.log(audioSrc);
     const time = convertInMinutesSecondes(audioRef.current.duration);
     setcurrentTime(time);
-    await audioRef.current.play();
+    audioRef.current.play();
   };
 
   const convertInMinutesSecondes = (secondes) => {
@@ -107,7 +107,7 @@ export default function Home({ songs }) {
                   {currentSong != null && (
                     <>
                       <div>
-                        <img
+                        <Image
                           className="cover"
                           src={currentSong.img}
                           alt={currentSong.title}
@@ -141,7 +141,7 @@ export default function Home({ songs }) {
     </>
   );
 }
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const res = await fetch(`http://localhost:3000/api/music`);
   const songs = await res.json();
 
