@@ -77,7 +77,7 @@ export default function Home({ songs }) {
         <header>
           <details>
             <summary>
-              <b>Favorites</b>
+              <b>Favorites in progress...</b>
             </summary>
             {favorites.map((elem, index) => {
               return (
