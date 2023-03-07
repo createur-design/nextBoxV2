@@ -149,7 +149,7 @@ export default function Home({ songs }) {
   );
 }
 export async function getStaticProps() {
-  const res = await fetch(`http://localhost:3000/api/music`);
+  const res = await fetch(`api/music`);
   const songs = await res.json();
 
   // Pass data to the page via props
