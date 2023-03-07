@@ -148,7 +148,7 @@ export default function Home({ songs }) {
     </>
   );
 }
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch(`https://next-box-v2.vercel.app/api/music`);
   const songs = await res.json();
 
