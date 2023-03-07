@@ -82,7 +82,12 @@ export default function Home({ songs }) {
                         <div className="grid-x grid-padding-x align-middle mb1">
                           <div className="cell shrink">
                             <div className="picture">
-                              <img src={song.img} alt="" />
+                              <Image
+                                src={song.img}
+                                alt={song.title}
+                                width={100}
+                                height={100}
+                              />
                             </div>
                           </div>
                           <div className="cell shrink">
@@ -111,6 +116,8 @@ export default function Home({ songs }) {
                           className="cover"
                           src={currentSong.img}
                           alt={currentSong.title}
+                          width={500}
+                          height={500}
                         />
                       </div>
                       <div className="grid-x grid-padding-x align-middle">
